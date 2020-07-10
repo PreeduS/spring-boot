@@ -1,0 +1,97 @@
+
+./mvnw spring-boot:run
+
+./mvnw spring-boot:run --debug
+
+
+
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html
+
+
+Spring Boot Quick Start 32
+https://www.youtube.com/watch?v=9mFcT2f8JJI&list=PLqq-6Pq4lTTbx8p2oCgcAQGQyqN8XeA1x&index=32
+
+
+Spring framework Tutorial (082 Step 12 Your First Spring MVC Controller)
+https://www.youtube.com/watch?v=RUS97oTIKNs&list=PLw_k9CF7hBpJJsRWAhwSrDlWAzuMV0irl&index=80
+
+
+
+
+https://www.youtube.com/playlist?list=PLO0KWyajXMh4fGMvAw1yQ1x7mWayRcmX3
+
+
+
+https://www.youtube.com/playlist?list=PLqq-6Pq4lTTaoaVoQVfRJPqvNTCjcTvJB
+# 8 - 10
+
+
+
+# check
+
+
+// @Embeddable
+streams
+flyway migration
+
+validation
+
+
+
+@ControllerAdvice
+
+
+@PostConstruct
+RestTemplate, RestTemplateBuilder, restTemplate.exchange
+RestTemplateCustomizer
+HttpEntity
+
+
+HandlerInterceptorAdapter
+- preHandle         # before sending the req to the controller
+- postHandle        # before sending the res to the client
+- afterCompletion   # after completing the req and res
+ClientHttpRequestInterceptor
+
+
+
+
+
+spring context
+
+
+
+
+main/resources/application.yaml
+
+security:
+  jwt:
+    publicKey: ${JWT_PUBLIC_KEY}
+
+
+@Value("${security.jwt.publicKey}")
+
+
+
+UriComponentsBuilder
+
+
+
+
+correlation id 
+
+
+
+
+// implements ResponseBodyAdvice
+beforeBodyWrite
+
+
+WebSecurityConfigurerAdapter
+
+OncePerRequestFilter
+
+
+
+ObjectMapper

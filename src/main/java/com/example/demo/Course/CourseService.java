@@ -1,0 +1,336 @@
+package com.example.demo.Course;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.example.demo.Topic.Topic;
+import com.example.demo.Topic.TopicRepository;
+
+
+@Service
+public class CourseService {
+    @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
+    private TopicRepository topicRepository;
+
+    //@Autowired
+    //private SessionFactory sessionFactory;
+    
+    @Autowired
+    private EntityManager entityManager;
+ 
+
+    public List<Course> getAllCourses(Long topicId){
+        List<Course> courses = new ArrayList<>();
+   
+        //courseRepository.findAll().forEach(courses::add);
+        courseRepository.findByTopicId(topicId).forEach(courses::add);
+
+        return courses;
+    }
+
+    public Course addCourse(Course course){
+        return courseRepository.save(course);
+    }
+
+    public CourseDtoInput addTopicWithCourses(CourseDtoInput courseDtoInput){
+        System.out.println(courseDtoInput.getTopic().getName());
+        System.out.println(courseDtoInput.getTopic().getId());
+        Topic topicResult = topicRepository.save(courseDtoInput.getTopic());
+        System.out.println(topicResult.getName());
+        System.out.println(topicResult.getId());
+            List <Course> updatedCourses = new ArrayList<Course>();
+            courseDtoInput.getCourses().forEach(course ->{
+                course.setTopic(topicResult.getId(), "test topic");
+                updatedCourses.add(course);
+            });
+            List<Course> coursesResult = new ArrayList<Course>();
+            courseRepository.saveAll(updatedCourses).forEach(coursesResult::add);
+
+            CourseDtoInput result = new CourseDtoInput(coursesResult, topicResult);
+            return result;
+
+
+       /* List<Topic> updatedTopics = new ArrayList<Topic>();
+        courseDtoInput.getCourses().forEach(topic ->{
+            updatedTopics.add(new Topic(topic.getId(), topic.getName() ));
+        });
+        List<Topic> topicsResult = new ArrayList<Topic>();
+        topicRepository.saveAll(updatedTopics).forEach(topicsResult::add);
+*/
+/*
+
+        List<Topic> topicsResult = new ArrayList<Topic>();
+        topicRepository.saveAll(updatedTopics).forEach(topicsResult::add);
+
+        CourseDtoInput result = new CourseDtoInput(courseResult, topicResult);
+       
+         return result;*/
+    }
+    public List<Course> addCourse(List<Course> courses){
+        List<Course> result = new ArrayList<Course>();
+
+        courseRepository.saveAll(courses).forEach(result::add);
+        return result;
+    }
+    public Course updateCourse(  Course course){
+    //public Course updateCourse(Long id, Course course){
+      //  course.setId(id);
+     
+        return courseRepository.save(course);
+    }
+
+
+    public Optional<Course> getCourse(Long id){
+        return courseRepository.findById(id);
+    }
+    public void deleteCourse(Long id){
+        courseRepository.deleteById(id);
+    }
+
+
+
+
+
+
+    // ---
+
+
+    public void temp(){
+        /*Session session = sessionFactory.openSession();
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Course> criteriaQuery = builder.createQuery(Course.class);
+       
+        
+        Root<Course> root = criteriaQuery.from(Course.class);
+
+        criteriaQuery.select(root);
+        
+        Query<Course> query = session.createQuery(criteriaQuery);
+
+        List<Course> list = query.list();
+
+        list.forEach(x -> System.out.println(x.getName()) );
+*/
+
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            
+            CriteriaQuery<Course> query = cb.createQuery(Course.class);
+            Root<Course> root = query.from(Course.class);
+
+            query.select(root);
+        
+
+            // query.where(cb.equal(root.get("id"),10));
+            // query.where(cb.gt(root.get("id"),10));
+ 
+            List<Predicate> predicates = new ArrayList<Predicate>();
+
+            // predicates.add( cb.gt(root.get("id"),10) );
+            // predicates.add( cb.lt(root.get("id"),15) );
+            predicates.add( 
+                cb.or(
+                    cb.and(
+                        cb.greaterThanOrEqualTo(root.get("id"),10),
+                        cb.lessThanOrEqualTo(root.get("id"),15)
+                    ), 
+                    cb.equal(root.get("id"),5)
+                )
+ 
+            );
+
+            query.where(predicates.toArray(new Predicate[]{}));
+
+            List<Course> list = entityManager.createQuery(query).getResultList();
+    
+            list.forEach(x -> System.out.println(x.getName()+"_"+ x.getId()) );
+
+
+
+            //Session session = entityManager.unwrap(Course.class);
+            //session.getSessionFactory()
+            //session.beginTransaction()
+
+
+
+        
+
+    } 
+
+
+
+    public void temp2(){
+        
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
+        Root<Course> root = query.from(Course.class);
+
+        //Path<Object> idPath = root.get("id");
+        //Path<Object> namePath = root.get("name");
+        //query.select(cb.array(idPath,namePath));
+   
+        query.multiselect(root.get("id"),root.get("name"));
+
+        List<Object[]> list = entityManager.createQuery(query).getResultList();
+
+        list.forEach(x -> System.out.println((Long)x[0] + " : " + (String)x[1] ) );
+    }
+    public void temp3(){
+        
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            
+        CriteriaQuery<CourseDtoOutput> query = cb.createQuery(CourseDtoOutput.class);
+        Root<Course> root = query.from(Course.class);
+
+ 
+   
+        query.select(cb.construct(CourseDtoOutput.class, root.get("id"),root.get("name")));
+
+        List<CourseDtoOutput> list = entityManager.createQuery(query).getResultList();
+
+        list.forEach(x -> System.out.println(x.getId() + " - " + x.getName()) );
+    }
+
+
+
+
+
+    public void temp4(){
+        
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            
+        CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
+        Root<Course> root = query.from(Course.class);
+
+
+        query.multiselect(root.get("id"),root.get("name"));
+
+
+        List<Tuple> list = entityManager.createQuery(query).getResultList();
+
+        list.forEach(x -> System.out.println( (Long)x.get(root.get("id")) + " -- " + (String)x.get(root.get("name")) ) );
+    }
+    public void temp5(){
+        
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            
+        CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
+        Root<Topic> topicRoot = query.from(Topic.class);
+        Root<Course> courseRoot = query.from(Course.class);
+
+        query.multiselect(topicRoot, courseRoot);
+
+        Predicate topicRestrictions = cb.equal(topicRoot.get("id"), 1);
+        Predicate courseRestrictions = cb.ge(courseRoot.get("id"), 5);
+
+        query.where(cb.and(topicRestrictions, courseRestrictions));
+
+
+        List<Tuple> list = entityManager.createQuery(query).getResultList();
+
+        list.forEach(x -> {
+            System.out.println(  
+                "Topic: " + 
+                ((Topic)x.get(0)).getId() + ", " + ((Topic)x.get(0)).getName() + "\n" +
+                "Course: " + 
+                ((Course)x.get(1)).getId() + ", " + ((Course)x.get(1)).getName() + "\n"
+            );
+        
+        });
+    }
+
+    public void temp6(){
+        
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            
+        CriteriaQuery<Course> query = cb.createQuery(Course.class);
+        Root<Course> root = query.from(Course.class); 
+
+        root.join("topic");
+        // root.fetch("topic");     // eager load
+
+        List<Course> list = entityManager.createQuery(query).getResultList();
+
+        list.forEach(x -> System.out.println(x.getId() + " - " + x.getName() + " - " + x.getTopic().getName() ) );
+
+
+    }
+    public void temp6_2(){
+        //todo group by
+      
+
+
+    }
+    public void temp7(){
+        Long id = 2L;
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Course> query = cb.createQuery(Course.class);
+        Root<Course> root = query.from(Course.class); 
+
+
+        ParameterExpression<Long> idParam = cb.parameter(Long.class); 
+
+        query.where(cb.equal(root.get("id"), idParam));
+
+ 
+        //SessionFactory sessionFactory = entityManager.unwrap(SessionFactory.class);//.getSessionFactory();
+          //SessionFactory sessionFactory = session.getSessionFactory()
+        
+        //Session session = sessionFactory.openSession();
+         
+        //Query<Course> sessionQuery = session.createQuery( query )
+        TypedQuery<Course> sessionQuery = entityManager.createQuery( query );
+        sessionQuery.setParameter( idParam, id );
+ 
+
+        List<Course> list = sessionQuery.getResultList();
+        
+        //entityManager.getTransaction().begin();
+        //entityManager.getTransaction().commit(); 
+ 
+
+       // session.close();
+
+        list.forEach(x -> System.out.println(x.getId() + " - " + x.getName() + " - " + x.getTopic().getName() ) );
+
+    }
+
+    public void temp8(){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Course> root = query.from(Course.class);
+
+        // query.select(cb.count(root));
+        // query.select(cb.max(root.get("id")));
+        // countDistinct
+        query.select(cb.sum(root.get("id")));
+
+
+        Long result = entityManager.createQuery(query).getSingleResult();
+
+        System.out.println("result: " +result);
+    
+    }
+}
