@@ -9,8 +9,15 @@
 https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html
 
 
-Spring Boot Quick Start 32
+Spring Boot Quick Start 32              # Java Brains
 https://www.youtube.com/watch?v=9mFcT2f8JJI&list=PLqq-6Pq4lTTbx8p2oCgcAQGQyqN8XeA1x&index=32
+
+
+Spring Security Basics                  # Java Brains
+https://www.youtube.com/playlist?list=PLqq-6Pq4lTTYTEooakHchTGglSvkZAjnE
+done: 1 - 7
+
+filters, servlets
 
 
 Spring framework Tutorial (082 Step 12 Your First Spring MVC Controller)
@@ -22,10 +29,7 @@ https://www.youtube.com/watch?v=RUS97oTIKNs&list=PLw_k9CF7hBpJJsRWAhwSrDlWAzuMV0
 https://www.youtube.com/playlist?list=PLO0KWyajXMh4fGMvAw1yQ1x7mWayRcmX3
 
 
-
-https://www.youtube.com/playlist?list=PLqq-6Pq4lTTaoaVoQVfRJPqvNTCjcTvJB
-# 8 - 10
-
+logging
 
 
 # check
@@ -42,10 +46,9 @@ validation
 @ControllerAdvice
 
 
-@PostConstruct
-RestTemplate, RestTemplateBuilder, restTemplate.exchange
+@PostConstruct, RestTemplate, restTemplate.exchange, HttpEntity        # done
 RestTemplateCustomizer
-HttpEntity
+RestTemplateBuilder
 
 
 HandlerInterceptorAdapter
@@ -95,3 +98,50 @@ OncePerRequestFilter
 
 
 ObjectMapper
+
+classpath
+
+-----------------------------
+
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html
+
+
+Spring Boot Quick Start 32
+https://www.youtube.com/watch?v=9mFcT2f8JJI&list=PLqq-6Pq4lTTbx8p2oCgcAQGQyqN8XeA1x&index=32
+
+
+Spring framework Tutorial (082 Step 12 Your First Spring MVC Controller)
+https://www.youtube.com/watch?v=RUS97oTIKNs&list=PLw_k9CF7hBpJJsRWAhwSrDlWAzuMV0irl&index=80
+
+
+
+
+Microservices with Spring Boot          # Green Learner
+https://www.youtube.com/playlist?list=PLq3uEqRnr_2Hb9M-hz6GPVg_x9TUQ9PJA&pbjreload=101
+done: 17 - 22           # RestTemplate 
+
+
+
+
+
+
+
+----
+
+Spring Boot Microservices Level 1: Communication and Discovery
+https://www.youtube.com/playlist?list=PLqq-6Pq4lTTZSKAFG6aCDVDP86Qx4lNas
+done: 11 - 17                        # skip: 13
+
+Spring Boot Microservices Level 3: Microservice configuration
+https://www.youtube.com/playlist?list=PLqq-6Pq4lTTaoaVoQVfRJPqvNTCjcTvJB
+# 1 , 8 - 10
+
+
+
+//interceptor
+https://stackoverflow.com/questions/52321516/what-is-the-correct-achitecture-using-resttemplate-and-resttemplatecustomizer-wi
+
+
+
+

@@ -36,7 +36,9 @@ public class Course {
     public void setTopic(Long topicId, String topicName){
         this.topic = new Topic(topicId, topicName);
     }
-
+    public Topic getTopic(){
+      return topic;
+   }
     public void setId(Long id){
        this.id = id;
     }
@@ -44,13 +46,23 @@ public class Course {
     public Long getId(){
        return id;
     }
+
+    
+   public void setName(String name){
+      this.name = name;
+   }
     public String getName(){
        return name;
     }
+
+    public void setDescription(String description){
+      this.description = description;
+   }
     public String getDescription(){
        return description;
     }
-    public Topic getTopic(){
-       return topic;
-    }
+
+
+
+    
 }

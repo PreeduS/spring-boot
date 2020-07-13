@@ -68,6 +68,18 @@ public class CourseController {
     }
 
 
+    @PostMapping("/_updateCourse/{courseId}")
+    public void _updateCourse(@PathVariable String courseId) {
+       
+        courseService._updateCourse(courseId);
+    }
+    @DeleteMapping("/_deleteCourse/{courseId}")
+    public void _deleteCourse(@PathVariable String courseId) {
+       
+        courseService._deleteCourse(courseId);
+    }
+
+
     @GetMapping("/temp")
     public void temp( ) {
        

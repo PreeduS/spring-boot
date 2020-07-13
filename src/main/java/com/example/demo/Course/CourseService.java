@@ -5,19 +5,22 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.Topic.Topic;
@@ -108,7 +111,44 @@ public class CourseService {
 
 
 
-
+        //criteria
+        @Transactional
+        public void _updateCourse(String id){
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            //em.getTransaction().begin();
+            CriteriaUpdate<Course> criteriaUpdate = cb.createCriteriaUpdate(Course.class);
+            Root<Course> root = criteriaUpdate.from(Course.class);
+    
+            criteriaUpdate.where(cb.equal(root.get("id"), Integer.parseInt(id)));
+            // works without overriding with null
+            criteriaUpdate.set("name", "c_name");
+            //criteriaUpdate.set("description", null);
+    
+            Query query = entityManager.createQuery(criteriaUpdate);
+            query.executeUpdate();  
+    
+            //em.getTransaction().commit();
+            //em.close();
+    
+            // https://www.baeldung.com/hibernate-criteria-queries
+    
+        }
+    
+        @Transactional
+        public void _deleteCourse(String id){
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+     
+            CriteriaDelete<Course> criteriaDelete = cb.createCriteriaDelete(Course.class);
+            Root<Course> root = criteriaDelete.from(Course.class);
+    
+            criteriaDelete.where(cb.equal(root.get("id"), Integer.parseInt(id)));
+     
+    
+            Query query = entityManager.createQuery(criteriaDelete);
+            query.executeUpdate();  
+     
+    
+        }
 
 
     // ---
