@@ -1,5 +1,6 @@
 package com.example.demo.other;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -15,16 +16,22 @@ public class AppUserDetails implements UserDetails {
 
     private String username;
     private String password;
-    private boolean active;
+    private boolean enabled;
     private List<GrantedAuthority> authorities;
 
     public AppUserDetails(User user){
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.active = user.isActive();
-        this.authorities = Arrays.stream(user.getRoles().split(","))
+        this.enabled = user.isEnabled();
+        /*this.authorities = Arrays.stream(user.getRoles().split(","))
+        .map(SimpleGrantedAuthority::new)
+        .collect(Collectors.toList());*/
+        String[] roles = {"USER"};
+        this.authorities = Arrays.stream( roles )
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
+
+        
     }
 
     @Override
@@ -60,7 +67,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() { 
-        return active;
+        return enabled;
     }
 
 

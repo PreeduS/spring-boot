@@ -5,20 +5,22 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
-@Table(name = "User")
+@Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String username;
 
     private String password;
 
-    private boolean active;
-
+    private boolean enabled;
+    
+    @Transient
     private String roles;
 
     
@@ -35,12 +37,12 @@ public class User {
         this.roles = roles;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getPassword() {
