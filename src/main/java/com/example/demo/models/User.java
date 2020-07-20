@@ -1,27 +1,51 @@
 package com.example.demo.models;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
+
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable{
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    //@NaturalId
+    @Column(nullable = false, unique = true)
     private String username;
 
     private String password;
 
     private boolean enabled;
     
-    @Transient
-    private String roles;
+    //@Transient
+    //private String roles;
+
+    @OneToMany(mappedBy = "user", fetch=FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
+    //@OneToMany(mappedBy = "username")
+    List<Authorities> roles = new ArrayList<Authorities>();
+    //private Authorities roles2;
 
     
 
@@ -29,11 +53,11 @@ public class User {
         return username;
     }
 
-    public String getRoles() {
+    public List<Authorities> getRoles() {
         return roles;
     }
 
-    public void setRoles(String roles) {
+    public void setRoles(List<Authorities> roles) {
         this.roles = roles;
     }
 

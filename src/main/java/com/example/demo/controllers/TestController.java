@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.example.demo.enums.AppRoles;
+import com.example.demo.enums.UserPermissions;
 import com.example.demo.interceptors.RestTemplateInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,15 @@ public class TestController {
 
     @Autowired
     Environment env;
+
+    @GetMapping("/test/enum")
+    public ResponseEntity<String> getEnum(){
+        //System.out.println(AppRoles.ADMIN.name());
+        //System.out.println(AppRoles.USER.name());
+        System.out.println(UserPermissions.USER_READ);
+
+        return ResponseEntity.ok("enum");
+    }
 
     @GetMapping("/test/interceptor")
     public ResponseEntity<String> interceptor(){

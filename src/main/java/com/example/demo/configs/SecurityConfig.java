@@ -2,21 +2,26 @@ package com.example.demo.configs;
 
 import javax.sql.DataSource;
 
+import com.example.demo.interceptors.JwtRequestFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
+@Configuration
 @EnableWebSecurity
+// @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -24,6 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserDetailsService userDetailsService;
+
+    @Autowired
+    JwtRequestFilter jwtRequestFilter;
 
 
     @Override
@@ -64,8 +72,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         */
 
 
+     
+        auth
+          .userDetailsService(userDetailsService)
+          .passwordEncoder(getPasswordEncoder());
+        
 
-        auth.userDetailsService(userDetailsService);
+        //// auth.authenticationProvider(authProvider);       // todo check
 
     }
 
@@ -75,16 +88,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .csrf().disable()
       .authorizeRequests()
       .antMatchers("/protected/admin").hasRole("ADMIN")
-      .antMatchers("/protected/user").hasAnyRole("USER","ADMIN")
-      .antMatchers("/auth/jwt").permitAll()          
-        //.antMatchers("/","static/css","static/js").permitAll()                //.antMatchers("/**")
+      .antMatchers("/protected/user").hasAnyRole("USER","ADMIN")                // hasAnyAuthority(authorities) // manually handle role prefix
+      .antMatchers("/auth/jwt").permitAll()        
+        //.antMatchers("/","static/css","static/js").permitAll()                // .antMatchers("/**")     // .antMatchers(HttpMethod.GET, "path")  
       .antMatchers("/").permitAll()
       //.anyRequest().authenticated() //any request needs to be authenticated
       .and()
-      .formLogin();
-
+      .sessionManagement()
+      .sessionCreationPolicy(SessionCreationPolicy.STATELESS);      // jwt, don't create session
+      //.and()
+      //.formLogin();
       // .loginPage("/sign-in")
- 
+
+      http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
     }
 
     @Override

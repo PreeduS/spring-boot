@@ -6,6 +6,7 @@ import com.example.demo.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,9 +29,17 @@ public class AuthController {
 
     @GetMapping("/protected/user")
     public String protectedUser() {
-
         return "protected/user";
-
+    } 
+    @GetMapping("/protected/admin")
+    public String protectedAdmin() {
+        return "protected/admin";
+    } 
+    @GetMapping("/protected/admin2")
+    // hasRole, hasAnyRole, hasAuthority, hasAnyAuthority
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public String protectedAdmin2() {
+        return "protected/admin2";
     } 
     @PostMapping("/auth/jwt")
     public ResponseEntity<AuthenticationJwtResponseDto> authJwt(@RequestBody AuthenticationJwtRequestDto authenticationJwtRequestDto) throws Exception{
@@ -40,7 +49,8 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(authenticationJwtRequestDto.getUsername(), authenticationJwtRequestDto.getPassword())
             );
         }catch(BadCredentialsException e){
-            throw new Exception("Incorrect username or password", e);
+            //throw new Exception("Incorrect username or password", e);
+            throw new BadCredentialsException("Incorrect username or password");
         }
 
 
