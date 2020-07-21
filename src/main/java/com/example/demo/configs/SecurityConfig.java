@@ -2,6 +2,8 @@ package com.example.demo.configs;
 
 import javax.sql.DataSource;
 
+import com.example.demo.other.CustomAuthenticationProvider;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserDetailsService userDetailsService;
+    @Autowired
+    CustomAuthenticationProvider customAuthenticationProvider;
 
 
     @Override
@@ -66,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         auth.userDetailsService(userDetailsService);
+        auth.authenticationProvider(customAuthenticationProvider);
 
     }
 
@@ -91,6 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     protected AuthenticationManager authenticationManager() throws Exception { 
       return super.authenticationManager();
+      // return super.authenticationManagerBean();
     }
 
 
