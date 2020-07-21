@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.demo.models.Authorities;
 import com.example.demo.models.User;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -25,11 +26,19 @@ public class AppUserDetails implements UserDetails {
         this.enabled = user.isEnabled();
         /*this.authorities = Arrays.stream(user.getRoles().split(","))
         .map(SimpleGrantedAuthority::new)
-        .collect(Collectors.toList());*/
-        String[] roles = {"USER"};
-        this.authorities = Arrays.stream( roles )
+        .collect(Collectors.toList());
+        */
+        //List<Authorities> a = user.getRoles();
+
+        this.authorities = user.getRoles().stream()
+        .map(x ->x.getAuthority())
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
+
+        /*String[] roles = {"USER"};
+        this.authorities = Arrays.stream( roles )
+        .map(SimpleGrantedAuthority::new)
+        .collect(Collectors.toList());*/
 
         
     }

@@ -15,7 +15,7 @@ https://www.youtube.com/watch?v=9mFcT2f8JJI&list=PLqq-6Pq4lTTbx8p2oCgcAQGQyqN8Xe
 
 Spring Security Basics                  # Java Brains
 https://www.youtube.com/playlist?list=PLqq-6Pq4lTTYTEooakHchTGglSvkZAjnE
-done: 1 - 7
+done: 1 - 12, skip: 9, 11
 
 filters, servlets
 
@@ -34,6 +34,11 @@ logging
 
 # check
 
+AuthenticationProvider 
+JwtAuthenticationToken vs UsernamePasswordAuthenticationToken
+
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 
 // @Embeddable
 streams
@@ -143,5 +148,8 @@ https://www.youtube.com/playlist?list=PLqq-6Pq4lTTaoaVoQVfRJPqvNTCjcTvJB
 https://stackoverflow.com/questions/52321516/what-is-the-correct-achitecture-using-resttemplate-and-resttemplatecustomizer-wi
 
 
+Spring Security | FULL COURSE
+https://www.youtube.com/watch?v=her_7pa0vrg&t=702s
+# done:2:02:00                           # skip: 26-42
 
-
+# guava ?

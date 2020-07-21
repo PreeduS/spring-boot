@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 CREATE TABLE IF NOT EXISTS authorities (
+    id serial primary key,
     username varchar(50) not null,
     authority varchar(50) not null,
     constraint fk_authorities_users foreign key(username) references users(username)
