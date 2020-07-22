@@ -49,7 +49,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(username != null &&  userService.getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if(jwtUtil.validateToken(jwt, userDetails)){
-                 Collection<?> z = userDetails.getAuthorities();
+                 //Collection<?> z = userDetails.getAuthorities();
 
                 // default
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = 

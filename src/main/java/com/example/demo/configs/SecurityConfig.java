@@ -2,7 +2,8 @@ package com.example.demo.configs;
 
 import javax.sql.DataSource;
 
-import com.example.demo.other.CustomAuthenticationProvider;
+import com.example.demo.security.filters.CustomAuthenticationFilter;
+import com.example.demo.security.providers.CustomAuthenticationProvider;
 import com.example.demo.interceptors.JwtRequestFilter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     JwtRequestFilter jwtRequestFilter;
+    @Autowired
+    CustomAuthenticationFilter customAuthenticationFilter;
 
 
     @Override
@@ -81,9 +84,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .passwordEncoder(getPasswordEncoder());
         
 
-        auth.userDetailsService(userDetailsService);
         auth.authenticationProvider(customAuthenticationProvider);
-        //// auth.authenticationProvider(authProvider);       // todo check multiple
+        // auth.authenticationProvider(authProvider2);      
 
     }
 
@@ -106,7 +108,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       // .loginPage("/sign-in")
 
       http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
+      http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+      //http.addFilterAt(filter, atFilter)
     }
 
     @Override

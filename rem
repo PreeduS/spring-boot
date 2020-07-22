@@ -15,7 +15,7 @@ https://www.youtube.com/watch?v=9mFcT2f8JJI&list=PLqq-6Pq4lTTbx8p2oCgcAQGQyqN8Xe
 
 Spring Security Basics                  # Java Brains
 https://www.youtube.com/playlist?list=PLqq-6Pq4lTTYTEooakHchTGglSvkZAjnE
-done: 1 - 12, skip: 9, 11
+done: 1 - 15, skip: 9, 11, 13, 14
 
 filters, servlets
 
@@ -36,6 +36,7 @@ logging
 
 AuthenticationProvider 
 JwtAuthenticationToken vs UsernamePasswordAuthenticationToken
+https://stackoverflow.com/questions/25794680/multiple-authentication-mechanisms-in-a-single-app-using-java-config
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -106,6 +107,20 @@ ObjectMapper
 
 classpath
 
+Lombok
+
+
+ExceptionTranslationFilter
+
+OncePerRequestFilter vs Filter
+
+
+otp authentication
+
+equals() and hashCode()
+
+
+validate properties, stop process on exception
 -----------------------------
 
 
@@ -150,6 +165,65 @@ https://stackoverflow.com/questions/52321516/what-is-the-correct-achitecture-usi
 
 Spring Security | FULL COURSE
 https://www.youtube.com/watch?v=her_7pa0vrg&t=702s
-# done:2:02:00                           # skip: 26-42
+# done:2:17:00                           # skip: 26-42, 2:02:00 - 2:14:00 
 
 # guava ?
+
+
+
+-----------------------------
+check oauth
+
+# https://www.baeldung.com/spring-security-5-oauth2-login
+# default redirect uri
+# /login/oauth2/code/{registrationId}.
+/login/oauth2/code/google
+
+
+spring.security.oauth2.client.registration.google.client-id=<your client id>
+spring.security.oauth2.client.registration.google.client-secret=<your client secret>
+ 
+---
+
+
+<!-- ch -->
+<dependency>
+  <groupId>org.springframework.security.oauth.boot</groupId>
+  <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+  <version>2.3.1.RELEASE</version>
+</dependency>
+<!-- ch2 -->
+<dependency>
+  <groupId>org.springframework.security</groupId>
+  <artifactId>spring-security-oauth2-client</artifactId>
+</dependency>
+
+
+---
+https://keyholesoftware.com/2020/06/30/quick-start-spring-security-5-oauth2-login/
+
+-----------------------------
+https://www.youtube.com/playlist?list=PLEocw3gLFc8XRaRBZkhBEZ_R3tmvfkWZz
+Spring Security Fundamentals
+done: 1     # 25:00 - end
+done: 3     # 20:00 - end
+done: 4 - 7
+
+
+Authentication Filter -> AuthenticationManager -> AuthenticationProvider -> UserDetailsManager - UserDetailsService 
+                                                  (PasswordEncoder)
+
+
+interface AuthenticationManager extends N/A  
+.authenticate
+
+interface AuthenticationProvider extends N/A  
+.authenticate, .supports
+
+interface UserDetailsManager extends UserDetailsService
+.createUser, .updateUser, .deleteUser, .changePassword, .userExists
+
+interface UserDetailsService  extends N/A  
+.loadUserByUsername
+
+
