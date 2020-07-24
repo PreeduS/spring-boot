@@ -45,8 +45,8 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        //return !request.getServletPath().equals("/login");
-		return super.shouldNotFilter(request);
+        return !request.getServletPath().equals("/login") || !request.getServletPath().equals("/graphql");
+		//return super.shouldNotFilter(request);
 	}
  
     
