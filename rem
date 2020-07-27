@@ -227,3 +227,12 @@ interface UserDetailsService  extends N/A
 .loadUserByUsername
 
 
+
+
+
+
+
+
+---
+
+com.graphql-java-kickstart

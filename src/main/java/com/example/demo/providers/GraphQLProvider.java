@@ -36,7 +36,7 @@ public class GraphQLProvider {
 
     @PostConstruct
     public void init() throws IOException {
-        URL url = Resources.getResource("schema.graphqls");
+        URL url = Resources.getResource("graphql/schema.graphqls");
         String sdl = Resources.toString(url, Charsets.UTF_8);
         GraphQLSchema graphQLSchema = buildSchema(sdl);
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
@@ -59,6 +59,9 @@ public class GraphQLProvider {
                     .dataFetcher("pageCount", graphQLDataFetchers.getPageCountDataFetcher())
                 )
                 .build();
+
+        // .fieldVisibility(fieldVisibility)
+        // https://www.graphql-java.com/documentation/v15/fieldvisibility/
     }
 }
 
