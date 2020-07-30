@@ -110,9 +110,12 @@ classpath
 Lombok
 
 
-ExceptionTranslationFilter
+ExceptionTranslationFilter, AuthenticationEntryPoint
 
 OncePerRequestFilter vs Filter
+
+@EnableGlobalMethodSecurity vs @EnableWebSecurity
+SecurityContextLogoutHandler
 
 
 otp authentication
@@ -121,6 +124,8 @@ equals() and hashCode()
 
 
 validate properties, stop process on exception
+
+Assert
 -----------------------------
 
 
@@ -144,7 +149,7 @@ done: 17 - 22           # RestTemplate
 
 
 
-
+https://www.youtube.com/playlist?list=PLO0KWyajXMh4fGMvAw1yQ1x7mWayRcmX3
 
 
 ----

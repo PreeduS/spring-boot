@@ -5,6 +5,7 @@ import com.example.demo.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,4 +49,12 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);;
     }
 
+    public void logout(){
+        Authentication auth = getAuthentication();
+
+        if(auth != null){
+           //new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+
+    }
 }
