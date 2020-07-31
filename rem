@@ -117,6 +117,12 @@ OncePerRequestFilter vs Filter
 @EnableGlobalMethodSecurity vs @EnableWebSecurity
 SecurityContextLogoutHandler
 
+// https://programming.vip/docs/one-article-completes-spring-security-exception-handling-mechanism.html
+// https://stackoverflow.com/questions/34595605/how-to-manage-exceptions-thrown-in-filters-in-spring/34633687#34633687
+// https://www.devglan.com/spring-security/exception-handling-in-spring-security
+// https://stackoverflow.com/questions/41140669/handle-security-exceptions-in-spring-boot-resource-server
+
+DaoAuthenticationProvider
 
 otp authentication
 

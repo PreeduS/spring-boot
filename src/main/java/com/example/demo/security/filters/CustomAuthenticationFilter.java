@@ -2,6 +2,7 @@ package com.example.demo.security.filters;
 
 import java.io.IOException;
 
+import javax.naming.AuthenticationException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,25 +29,39 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
        
         String authorization = request.getHeader("Authorization");
 
         // Authorization: Basic <credentials>
         // iplement Authentication instead of UsernamePasswordAuthenticationToken
-        Authentication result = authenticationManager
+       // try{
+            Authentication result = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken("admin", authorization));
-        if (result.isAuthenticated()) {
-            // filters set the context
-            SecurityContextHolder.getContext().setAuthentication(result);
-            chain.doFilter(request, response);
-        }
+            if (result.isAuthenticated()) {
+                // filters set the context
+                SecurityContextHolder.getContext().setAuthentication(result);
+                //chain.doFilter(request, response);
+            }else{
+                // accessDeniedHandler
+                //response.getWriter().write("Access Denied... Forbidden");
 
+            }
+       // }catch(BadCredentialsException e){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            //throw new BadCredentialsException("Wrong username or password__TEST");
+            response.getWriter().write("test message");
+            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Authentication failed, bad credentials: " + e.getMessage());
+
+     
+      //  }
+ 
+      //throw new BadCredentialsException("Wrong username or password__TEST");
+        chain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return !request.getServletPath().equals("/login") || !request.getServletPath().equals("/graphql");
+        return request.getServletPath().equals("/login") || request.getServletPath().equals("/graphql");
 		//return super.shouldNotFilter(request);
 	}
  

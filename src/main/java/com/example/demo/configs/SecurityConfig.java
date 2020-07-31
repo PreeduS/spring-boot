@@ -23,10 +23,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -71,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * );
      */
 
-    auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
+   // auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
 
     auth.authenticationProvider(customAuthenticationProvider);
     // auth.authenticationProvider(authProvider2);
@@ -96,9 +98,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       //.formLogin();
       // .loginPage("/sign-in")
 
-      http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-      http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+      //http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+      //http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+      http.addFilterAfter(customAuthenticationFilter, ExceptionTranslationFilter.class);
       //http.addFilterAt(filter, atFilter)
+
+   
+      http.exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) ->{
+        response.setStatus(403);
+        response.getWriter().write("Forbidden: accessDeniedHandler " + accessDeniedException.getMessage());
+      });
 
       http.exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint(){
 
@@ -106,19 +115,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           public void commence(HttpServletRequest request, HttpServletResponse response,
               AuthenticationException authException) throws IOException, ServletException {
             
+                boolean test = authException instanceof BadCredentialsException;
+                boolean test2 = authException instanceof AuthenticationException;
+                boolean test3 = authException instanceof UsernameNotFoundException;
+
+                if(test3){
+                  UsernameNotFoundException testt = (UsernameNotFoundException)authException;
+                }
+                if(test){
+                  BadCredentialsException testtt = (BadCredentialsException)authException;
+                }
+
                 //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"AuthenticationEntryPoint: Authentication failed");
+                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"AuthenticationEntryPoint: Authentication failed");
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getOutputStream().println("{ \"error\": \"" + "test " + authException.getMessage() + "\" }");
+               
           }
-      /*
-          //@ExceptionHandler (value = {AccessDeniedException.class})
+       /*   
           @ExceptionHandler (value = {BadCredentialsException.class})
           public void commence(HttpServletRequest request, HttpServletResponse response,
-          BadCredentialsException badCredentialsException) throws IOException, ServletException {
+            BadCredentialsException authException) throws IOException, ServletException {
             
                 //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Authentication failed, bad credentials: " + badCredentialsException.getMessage());
+                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"AuthenticationEntryPoint: Authentication failed");
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getOutputStream().println("{ \"error\": \"" + "BadCredentialsException " + authException.getMessage() + "\" }");
+                //response.getWriter().write(s);
+               
           }
-             */ 
+      
+     
+              */
       });
     }
 
@@ -133,7 +163,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder getPasswordEncoder(){
         // temp
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
+        //return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean

@@ -43,15 +43,15 @@ public class AuthController {
     } 
     @PostMapping("/auth/jwt")
     public ResponseEntity<AuthenticationJwtResponseDto> authJwt(@RequestBody AuthenticationJwtRequestDto authenticationJwtRequestDto) throws Exception{
-        try{
+        //try{
 
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationJwtRequestDto.getUsername(), authenticationJwtRequestDto.getPassword())
             );
-        }catch(BadCredentialsException e){
+       // }catch(BadCredentialsException e){
             //throw new Exception("Incorrect username or password", e);
-            throw new BadCredentialsException("Incorrect username or password");
-        }
+            //throw new BadCredentialsException("Incorrect username or password");
+       // }
 
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationJwtRequestDto.getUsername());

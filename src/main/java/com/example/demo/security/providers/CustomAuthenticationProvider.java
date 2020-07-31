@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -30,13 +31,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
 
         if(userDetails == null){
-            throw new BadCredentialsException("Wrong username or password");
+            System.out.println("Wrong username or password_");
+            throw new BadCredentialsException("Wrong username or password_");
+            //throw new UsernameNotFoundException("Wrong username or password_");
         }
          
         if(bCryptPasswordEncoder.matches(password, userDetails.getPassword())){
             return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
         }else{
-            throw new BadCredentialsException("Wrong username or password");
+            System.out.println("Wrong username or password__");
+            throw new BadCredentialsException("Wrong username or password__");
+            //throw new UsernameNotFoundException("Wrong username or password__");
         }
 
 
