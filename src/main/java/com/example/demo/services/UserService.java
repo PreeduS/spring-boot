@@ -1,5 +1,8 @@
 package com.example.demo.services;
 
+import javax.persistence.EntityManager;
+
+import com.example.demo.dto.UserResponseDto;
 import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
 
@@ -18,6 +21,9 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+	@Autowired
+	private EntityManager entityManager;
 
     void signUp(User user) throws Exception{
       
@@ -57,4 +63,25 @@ public class UserService {
         }
 
     }
+    // todo move to repo
+    public UserResponseDto findById(int id){
+        return entityManager.find(UserResponseDto.class, id);
+       
+    }
+     // entityManager.merge(entity)          // update or insert based on id
+
+    public User update(User user){
+        return entityManager.merge(user);
+        
+    }
+    public User insert(User user){
+        return entityManager.merge(user);
+        
+    }
+    public void remove(int id){
+        User user = entityManager.find(User.class, id);     // fetch first
+        entityManager.remove(user);
+        
+    }
+    
 }

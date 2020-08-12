@@ -3,7 +3,7 @@
 
 ./mvnw spring-boot:run --debug
 
-
+./mvnw test
 
 
 https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html
@@ -103,7 +103,6 @@ OncePerRequestFilter
 
 
 
-ObjectMapper
 
 classpath
 
@@ -132,6 +131,14 @@ equals() and hashCode()
 validate properties, stop process on exception
 
 Assert
+
+JavaMailSender
+freemarker
+
+objectMapper.convertValue
+
+MockMvc
+
 -----------------------------
 
 
