@@ -51,7 +51,7 @@ public class CourseService {
     }
 
     public Course addCourse(Course course){
-        return courseRepository.save(course);
+        return courseRepository.save(course);               // insert or update
     }
 
     public CourseDtoInput addTopicWithCourses(CourseDtoInput courseDtoInput){
