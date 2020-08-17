@@ -11,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,7 +21,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private AppUserDetailService userDetailsService;
 
     @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -36,7 +37,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             //throw new UsernameNotFoundException("Wrong username or password_");
         }
          
-        if(bCryptPasswordEncoder.matches(password, userDetails.getPassword())){
+        if(passwordEncoder.matches(password, userDetails.getPassword())){
             return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
         }else{
             System.out.println("Wrong username or password__");

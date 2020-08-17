@@ -31,6 +31,8 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
        
         String authorization = request.getHeader("Authorization");
+        if(authorization != null){
+
 
         // Authorization: Basic <credentials>
         // iplement Authentication instead of UsernamePasswordAuthenticationToken
@@ -47,21 +49,22 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
             }
        // }catch(BadCredentialsException e){
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            //response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             //throw new BadCredentialsException("Wrong username or password__TEST");
-            response.getWriter().write("test message");
+            //response.getWriter().write("test message");
             //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Authentication failed, bad credentials: " + e.getMessage());
 
      
       //  }
- 
+    }
       //throw new BadCredentialsException("Wrong username or password__TEST");
         chain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getServletPath().equals("/login") || request.getServletPath().equals("/graphql");
+        boolean skip =  request.getServletPath().equals("/login") || request.getServletPath().equals("/graphql");
+        return skip;
 		//return super.shouldNotFilter(request);
 	}
  

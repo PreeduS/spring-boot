@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.hibernate.SessionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +19,12 @@ public class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 
+	@Bean
+    public ObjectMapper getObjectMapper(){ 
+      return new ObjectMapper();
+     
+	}
+	
 	/*@Bean  
 	public SessionFactory sessionFactory(HibernateEntityManagerFactory entityManagerFactory){  
 		return entityManagerFactory.getSessionFactory();  

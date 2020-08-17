@@ -24,6 +24,16 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @GetMapping("/user-test")
+    public ResponseEntity<String> test(){
+        return ResponseEntity.ok(userRepository.test());
+    }
+    @GetMapping("/user-test2")
+    public ResponseEntity<User> test2(){
+        Optional<User> user = userRepository.findByUsername("admin");
+        //user.orElseThrow(()-> new UsernameNotFoundException("Not Found"));
+        return ResponseEntity.ok(user.get());
+    }
     @GetMapping("/user/{username}")
     public ResponseEntity<Optional<User>> findByUsername(@PathVariable String username){
         return ResponseEntity.ok(userRepository.findByUsername(username));

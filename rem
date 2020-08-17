@@ -124,6 +124,16 @@ SecurityContextLogoutHandler
 
 DaoAuthenticationProvider
 
+HttpServletResponse getOutputStream vs getWriter
+
+// https://docs.spring.io/autorepo/docs/spring-security/4.1.0.RC1/reference/htmlsingle/#session-mgmt
+// https://www.codesandnotes.be/2014/10/31/restful-authentication-using-spring-security-on-spring-boot-and-jquery-as-a-web-client/
+// https://www.youtube.com/playlist?list=PLGXpHMFOMTTbCC4t6WSoKfVnUxHmyGXKJ
+
+
+// https://docs.spring.io/spring-security/site/docs/current/reference/html5/#multiple-httpsecurity
+// https://github.com/spring-projects/spring-security/issues/4505
+
 otp authentication
 
 equals() and hashCode()
@@ -132,6 +142,9 @@ equals() and hashCode()
 validate properties, stop process on exception
 
 Assert
+
+Actuator
+@PreDestroy
 -----------------------------
 
 
@@ -178,6 +191,11 @@ Spring Security | FULL COURSE
 https://www.youtube.com/watch?v=her_7pa0vrg&t=702s
 # done:2:17:00                           # skip: 26-42, 2:02:00 - 2:14:00 
 
+# 2:14:00 - 2:54:00
+
+
+// spring security session configuration
+
 # guava ?
 
 
@@ -219,7 +237,7 @@ Spring Security Fundamentals
 done: 1     # 25:00 - end
 done: 3     # 20:00 - end
 done: 4 - 7
-
+dome: 8     # 0 - 6:00
 
 Authentication Filter -> AuthenticationManager -> AuthenticationProvider -> UserDetailsManager - UserDetailsService 
                                                   (PasswordEncoder)
@@ -238,8 +256,9 @@ interface UserDetailsService  extends N/A
 .loadUserByUsername
 
 
-
-
+# https://stackoverflow.com/questions/9303502/multiple-authentication-providers-in-spring-security
+Once a successful authentication is made, it will stop polling the providers.
+If any provider throws an AccountStatusException it will also break the polling.
 
 
 
@@ -247,3 +266,8 @@ interface UserDetailsService  extends N/A
 ---
 
 com.graphql-java-kickstart
+
+
+
+https://docs.spring.io/spring-security/site/docs/current/reference/html5/#multiple-httpsecurity
+

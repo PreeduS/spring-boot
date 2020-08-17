@@ -39,6 +39,17 @@ public class TestController {
 
         return ResponseEntity.ok("enum");
     }
+    @GetMapping("/login")
+    public ResponseEntity<String> login(){
+ 
+        return ResponseEntity.ok(
+            "<form  method=\"post\" action=\"/login\">" +
+                "<input type=\"text\" name=\"username\"  required autofocus>"+
+                "<input type=\"password\" name=\"password\"  required >"+
+                "<button  type=\"submit\">Sign in</button>"+
+            " </form>"
+        );
+    }
 
     @GetMapping("/test/interceptor")
     public ResponseEntity<String> interceptor(){

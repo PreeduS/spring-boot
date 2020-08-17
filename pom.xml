@@ -65,6 +65,12 @@
 		</dependency>
 
 
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>6.5.3</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>
