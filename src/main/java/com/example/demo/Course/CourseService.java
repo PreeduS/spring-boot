@@ -37,9 +37,7 @@ public class CourseService {
     //@Autowired
     //private SessionFactory sessionFactory;
     
-    @Autowired
-    private EntityManager entityManager;
- 
+
 
     public List<Course> getAllCourses(Long topicId){
         List<Course> courses = new ArrayList<>();
@@ -108,22 +106,6 @@ public class CourseService {
     public void deleteCourse(Long id){
         courseRepository.deleteById(id);
     }
-
-
-
-        //criteria
-
-    
-
-
-
-    // ---
-
-
-
-
-
-
 
 
 }

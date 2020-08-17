@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.example.demo.Exception.ValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -111,6 +113,19 @@ public class CourseController {
 
 
         // ch: BindingResult
+         
+    }
+    @PostMapping("/test/validation3")
+    public ResponseEntity<?> testValidation3(@RequestBody @Valid TestValidationDto body, Errors errors) {
+       
+        if(errors.hasErrors()){ 
+            List<String> error = errors.getFieldErrors().stream().map(x -> x.getField() +", " + x.getCode() + ", " + x.getDefaultMessage() ).collect(Collectors.toList());
+
+            throw new ValidationException(error.get(0));
+
+        }
+        return ResponseEntity.ok(body);
+    
          
     }
 }

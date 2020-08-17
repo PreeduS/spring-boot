@@ -1,4 +1,4 @@
-package com.example.demo.Handler;
+package com.example.demo.ExceptionHandlers;
 
 import com.example.demo.Exception.InvalidHeaderFieldException;
 
@@ -16,13 +16,6 @@ public class HeaderExceptionHandler extends ResponseEntityExceptionHandler{
         return exception.getMessage();
     }*/
 
-    public class HandleInvalidHeaderFieldExceptionDto {
-        public String message;
-
-        public HandleInvalidHeaderFieldExceptionDto(String message){
-            this.message = message;
-        }
-    }
 
 
     @ExceptionHandler(InvalidHeaderFieldException.class)

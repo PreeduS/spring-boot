@@ -3,6 +3,8 @@ package com.example.demo.Course;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.example.demo.validators.Between;
+
 public class TestValidationDto {
 
     @NotNull
@@ -10,6 +12,9 @@ public class TestValidationDto {
     private String name;
 
     private String status;
+
+    @Between(min = 10, max = 100)
+    private Integer age;
 
     public TestValidationDto(String name, String status){
         this.name = name;
