@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseController {
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private CriteriaQueryExService criteriaService;
 
     @GetMapping("/topic/{id}/courses")
     public List<Course> getAllCourses(@PathVariable Long id) {
@@ -71,22 +73,29 @@ public class CourseController {
     @PostMapping("/_updateCourse/{courseId}")
     public void _updateCourse(@PathVariable String courseId) {
        
-        courseService._updateCourse(courseId);
+        criteriaService._updateCourse(courseId);
     }
     @DeleteMapping("/_deleteCourse/{courseId}")
     public void _deleteCourse(@PathVariable String courseId) {
        
-        courseService._deleteCourse(courseId);
+        criteriaService._deleteCourse(courseId);
     }
 
 
     @GetMapping("/temp")
     public void temp( ) {
        
-        courseService.temp8();
+        criteriaService.temp8();
     }
+
     @PostMapping("/test/validation")
-    public ResponseEntity<?> testValidation(@RequestBody @Valid TestValidationDto body, Errors errors) {
+    public ResponseEntity<?> testValidation(@RequestBody @Valid TestValidationDto body) {
+       
+        return ResponseEntity.ok(body);
+         
+    }
+    @PostMapping("/test/validation2")
+    public ResponseEntity<?> testValidation2(@RequestBody @Valid TestValidationDto body, Errors errors) {
        
         if(errors.hasErrors()){
             // throw new Error("Invalid Name");
@@ -95,5 +104,13 @@ public class CourseController {
         }
         return ResponseEntity.ok(body);
         //return ResponseEntity.ok().body(body);
+
+
+        // @Valid - validate based on the annotations in the TestValidationDto
+        // if validation fails and no Error param - Spring Boot throws a MethodArgumentNotValidException exception
+
+
+        // ch: BindingResult
+         
     }
 }

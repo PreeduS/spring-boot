@@ -28,7 +28,7 @@ public class User implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     //@NaturalId
     @Column(nullable = false, unique = true)
@@ -49,6 +49,9 @@ public class User implements Serializable{
 
     
 
+    public Integer getId() {
+        return id;
+    }
     public String getUsername() {
         return username;
     }
