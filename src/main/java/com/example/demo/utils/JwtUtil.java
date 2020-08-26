@@ -9,12 +9,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 public class JwtUtil {
     private String SECRET_KEY = "secret";
+    private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    public void setSecret(String secret){
+        this.SECRET_KEY = secret;
+    }
+    public void setSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm){
+        this.signatureAlgorithm = signatureAlgorithm;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -26,12 +35,12 @@ public class JwtUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
+    // Claims are a JWT's 'body'
     private Claims extractAllClaims(String token){
         return Jwts
         .parser()
         .setSigningKey(SECRET_KEY)
-        .parseClaimsJws(token)
+        .parseClaimsJws(token)      // throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException;        // base JwtException 
         .getBody();
     }
 
@@ -50,12 +59,20 @@ public class JwtUtil {
         .setSubject(subject)
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
-        .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+        .signWith(signatureAlgorithm, SECRET_KEY)
         .compact();
         
 
     }
 
+    public Boolean validateToken(String token){
+        try{
+            extractAllClaims(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
     public Boolean validateToken(String token, UserDetails userDetails){
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);

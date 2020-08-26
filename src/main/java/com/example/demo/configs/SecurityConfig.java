@@ -115,6 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers("/user-test").anonymous()
       .antMatchers("/user-test2").anonymous()
       .antMatchers("/test/**").permitAll()
+      .antMatchers("/mapper/**").permitAll()
       .antMatchers("/").permitAll()
       .anyRequest().authenticated() //any request needs to be authenticated
       .and()

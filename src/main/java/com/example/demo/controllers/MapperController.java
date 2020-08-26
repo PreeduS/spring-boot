@@ -1,10 +1,18 @@
 package com.example.demo.controllers;
 
-import com.example.demo.pojo.MapperPojo;
+import javax.annotation.PostConstruct;
+
+import com.example.demo.dto.MapperDto;
+import com.example.demo.dto.TestEntityDto;
+import com.example.demo.dto.TestEntityTargetDto;
+import com.example.demo.utils.MapperUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +24,27 @@ public class MapperController {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    MapperUtils mapperUtils;
+
+    @PostConstruct
+    public void init(){
+        // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // mapperUtils = new MapperUtils(objectMapper);
+        mapperUtils.configure(objectMapper -> objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false));
+    }
+
     @GetMapping("/mapper/test")
     public String test() {
         String jsonSource = "{\"title\":\"test title\"}";
         try {
-            JsonNode node = parse(jsonSource);
+            JsonNode node = mapperUtils.parse(jsonSource);
             String title = node.get("title").asText();
 
-            MapperPojo mapperPojo = fromJson(node, MapperPojo.class);
-            System.out.println("mapperPojo title:  " + mapperPojo.getTitle());
-
+            MapperDto mapperDto = mapperUtils.fromJson(node, MapperDto.class);
+            System.out.println("mapperDto title:  " + mapperDto.getTitle());
+            
+            
             return title;
 
 
@@ -34,14 +53,59 @@ public class MapperController {
         }
         return "";
     }
+    @GetMapping("/mapper/test2")
+    public String test2() {
+        MapperDto mapperDto = new MapperDto();
+        mapperDto.setTitle("title");
+        mapperDto.setAuthor("author");
+        JsonNode node = mapperUtils.toJson(mapperDto);
 
-    public JsonNode parse(String src) throws JsonMappingException, JsonProcessingException {
-        return objectMapper.readTree(src);
+        String result = node.get("title") + ", " + node.get("author");
+        System.out.println(result);
+        // assertEquals(result.asText(), "value")
+        return result;
     }
-    public <T> T fromJson(JsonNode node, Class<T> valueType) throws JsonProcessingException {
-        return objectMapper.treeToValue(node, valueType);
+    @GetMapping("/mapper/test3")
+    public void test3() {
+       TestEntityDto source  = new TestEntityDto();
+        
+       MapperDto mapper = new MapperDto();
+       mapper.setTitle("mapper title");
+       source.setP("test");
+       source.setP2(10);
+       source.setMapper(mapper);
+
+       // TestEntityTargetDto target = objectMapper.convertValue(source, TestEntityTargetDto.class);
+       TestEntityTargetDto target = mapperUtils.mapToObject(source, TestEntityTargetDto.class);
+
+       System.out.println(target.getP() + ", " + target.getP2());
     }
+
 
 
         
 }
+
+
+// https://www.youtube.com/playlist?list=PLAuGQNR28pW4dOc5uytMdzcQ4-TCJFUN4
+// Parsing Json in Java Tutorial Series     # done
+
+
+// ch: jackson
+
+// temp
+/*
+    public static <T> T clone(Object object, Class<T> clazz) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        T deepCopy = null;
+        try {
+            deepCopy = objectMapper
+                    .readValue(objectMapper.writeValueAsString(object), clazz);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return deepCopy;
+    }
+
+*/

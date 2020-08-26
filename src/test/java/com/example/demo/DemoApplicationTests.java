@@ -2,6 +2,8 @@ package com.example.demo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.demo.controllers.MapperController;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,5 +40,6 @@ class DemoApplicationTests {
 		
  
 	}
+ 
 
 }
