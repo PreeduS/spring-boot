@@ -160,6 +160,8 @@ objectMapper.convertValue
 
 MockMvc
 
+@ConditionalOnProperty
+ConfigurationProperties vs Value
 -----------------------------
 
 
