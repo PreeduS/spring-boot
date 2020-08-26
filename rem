@@ -279,7 +279,13 @@ If any provider throws an AccountStatusException it will also break the polling.
 
 
 
+---
+# org.springframework.security.web.access.ExceptionTranslationFilter
+# org.springframework.security.authentication.ProviderManager
+StandardWrapperValue  # 252 #  ExceptionUtils.handleThrowable(e);
+org.springframework.security.web.access.intercept.FilterSecurityInterceptor   # filterChain
 
+https://stackoverflow.com/questions/17715921/exception-handling-for-filter-in-spring
 ---
 
 com.graphql-java-kickstart

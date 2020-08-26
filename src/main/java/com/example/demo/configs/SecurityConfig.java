@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import com.example.demo.security.filters.CustomAuthenticationFilter;
 import com.example.demo.security.providers.CustomAuthenticationProvider;
 import com.example.demo.services.AppUserDetailService;
+import com.example.demo.utils.HttpResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.interceptors.JwtRequestFilter;
 
@@ -46,6 +47,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 // @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+  protected static final AuthenticationException BadCredentialsException = null;
+
   @Autowired
   DataSource dataSource;
 
@@ -58,8 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
   JwtRequestFilter jwtRequestFilter;
-  @Autowired
-  CustomAuthenticationFilter customAuthenticationFilter;
+  //@Autowired
+  //CustomAuthenticationFilter customAuthenticationFilter;
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -94,10 +97,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //.withUser("admin").password( getPasswordEncoder().encode("pass") ).roles("ADMIN") ;
     
 
-   // auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
-    auth.userDetailsService(appUserDetailService);
+      //auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
+      //auth.userDetailsService(appUserDetailService);
 
-    auth.authenticationProvider(customAuthenticationProvider);
+    //auth.authenticationProvider(customAuthenticationProvider);
     // auth.authenticationProvider(authProvider2);
 
   }
@@ -105,6 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
     protected void configure(HttpSecurity http) throws Exception{
       http
+      //.anonymous().disable()
       .csrf().disable()
       .authorizeRequests()
       .antMatchers("/protected/admin").hasRole("ADMIN")
@@ -116,16 +120,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers("/user-test2").anonymous()
       .antMatchers("/test/**").permitAll()
       .antMatchers("/mapper/**").permitAll()
-      .antMatchers("/").permitAll()
+      //.antMatchers("/").permitAll()
+      //.antMatchers("/**").permitAll()
       .anyRequest().authenticated() //any request needs to be authenticated
       .and()
       .sessionManagement()
-      //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)      // jwt, don't create session
-      .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)     
+      .sessionCreationPolicy(SessionCreationPolicy.STATELESS);      // jwt, don't create session
+      //.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)     
 
 
-      .and()
-      .formLogin().loginPage("/login").permitAll();
+      //.and()
+      //.formLogin().loginPage("/login").permitAll();
       /*
       .and()
       .formLogin()
@@ -148,9 +153,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           
       */
       
-      //http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+      http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
       //http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-      http.addFilterAfter(customAuthenticationFilter, ExceptionTranslationFilter.class);
+      //http.addFilterAfter(customAuthenticationFilter, ExceptionTranslationFilter.class);
       //http.addFilterAt(filter, atFilter)
 
    /*
@@ -158,31 +163,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         response.setStatus(403);
         response.getWriter().write("Forbidden: accessDeniedHandler " + accessDeniedException.getMessage());
       });*/
+      http.exceptionHandling().accessDeniedHandler(new RestAccessDeniedHandler());
+    
+      
+      if(true){
 
+     
       http.exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint(){
 
           @Override
           public void commence(HttpServletRequest request, HttpServletResponse response,
               AuthenticationException authException) throws IOException, ServletException {
-            
-
+       
                 //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"AuthenticationEntryPoint: Authentication failed");
                 
                 //response.getOutputStream().println("{ \"error\": \"" + "test " + authException.getMessage() + "\" }");
-
-                Map<String, Object> data = new HashMap<>();
+       
+                /*Map<String, Object> data = new HashMap<>();
                 data.put("timestamp", new Date());
                 data.put("status",HttpStatus.FORBIDDEN.value());
                 data.put("message", authException.getMessage());
                 data.put("path", request.getRequestURL().toString());
 
                 response.setContentType("application/json");
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                //response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 OutputStream out = response.getOutputStream();
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.writeValue(out, data);
-                out.flush();
+                out.flush();*/
+
+                HttpResponseUtil.writeExceptionToResponse(response, authException.getMessage(), request.getRequestURL().toString());
                
           }
        /*   
@@ -203,6 +215,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
               */
       });
     }
+    }
 
     @Override
     @Bean
@@ -218,14 +231,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder getPasswordEncoder(){
-
-      //return NoOpPasswordEncoder.getInstance();
+      // todo set bean based on profile
+      return NoOpPasswordEncoder.getInstance();
+      /*
       // return PasswordEncoderFactories.createDelegatingPasswordEncoder();
       String encodingId = "bcrypt";
 
       Map<String, PasswordEncoder> encoders = new HashMap<>();
       encoders.put(encodingId, new BCryptPasswordEncoder());
-      return new DelegatingPasswordEncoder(encodingId, encoders);
+      return new DelegatingPasswordEncoder(encodingId, encoders);*/
     }
 /*
     @Bean
