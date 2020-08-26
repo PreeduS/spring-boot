@@ -1,6 +1,12 @@
 
 ./mvnw spring-boot:run
 
+# Spring-Boot 2.x
+./mvnw spring-boot:run -Dspring-boot.run.profiles=test
+# ./mvnw spring-boot:run -Dspring-boot.run.profiles=local,foo,bar
+# Spring-Boot 1.x
+# ./mvnw spring-boot:run -Dspring.profiles.active=test
+
 ./mvnw spring-boot:run --debug
 
 ./mvnw test

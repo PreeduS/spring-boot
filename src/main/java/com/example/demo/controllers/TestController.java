@@ -61,7 +61,7 @@ public class TestController {
 
     @GetMapping("/test/value2")
     public ResponseEntity<String> testValue(@Value("${custom.value}") String value) {
-        System.out.println(env.getDefaultProfiles());
+        System.out.println("getDefaultProfiles = " + env.getDefaultProfiles());
         System.out.println("custom.value = " + env.getProperty("custom.value"));
         return ResponseEntity.ok("value2 = " + value + "<br />" + env.toString());
     }
