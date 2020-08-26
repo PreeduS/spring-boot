@@ -1,0 +1,5 @@
+# generate private key
+openssl genrsa -out key.pem 4096
+
+# extract public key
+openssl rsa -in key.pem -outform PEM -pubout -out public.pem

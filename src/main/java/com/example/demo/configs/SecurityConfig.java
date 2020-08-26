@@ -218,14 +218,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder getPasswordEncoder(){
-
-      //return NoOpPasswordEncoder.getInstance();
+      // todo set bean based on profile
+      return NoOpPasswordEncoder.getInstance();
+      /*
       // return PasswordEncoderFactories.createDelegatingPasswordEncoder();
       String encodingId = "bcrypt";
 
       Map<String, PasswordEncoder> encoders = new HashMap<>();
       encoders.put(encodingId, new BCryptPasswordEncoder());
-      return new DelegatingPasswordEncoder(encodingId, encoders);
+      return new DelegatingPasswordEncoder(encodingId, encoders);*/
     }
 /*
     @Bean
