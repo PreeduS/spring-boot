@@ -53,13 +53,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   UserDetailsService userDetailsService;
   @Autowired
   AppUserDetailService appUserDetailService;
-  @Autowired
-  CustomAuthenticationProvider customAuthenticationProvider;
+  //@Autowired
+  //CustomAuthenticationProvider customAuthenticationProvider;
 
   @Autowired
   JwtRequestFilter jwtRequestFilter;
-  @Autowired
-  CustomAuthenticationFilter customAuthenticationFilter;
+  //@Autowired
+  //CustomAuthenticationFilter customAuthenticationFilter;
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -94,10 +94,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //.withUser("admin").password( getPasswordEncoder().encode("pass") ).roles("ADMIN") ;
     
 
-   // auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
-    auth.userDetailsService(appUserDetailService);
+      //auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
+      auth.userDetailsService(appUserDetailService);
 
-    auth.authenticationProvider(customAuthenticationProvider);
+    //auth.authenticationProvider(customAuthenticationProvider);
     // auth.authenticationProvider(authProvider2);
 
   }
@@ -116,16 +116,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers("/user-test2").anonymous()
       .antMatchers("/test/**").permitAll()
       .antMatchers("/mapper/**").permitAll()
-      .antMatchers("/").permitAll()
+      //.antMatchers("/").permitAll()
+      //.antMatchers("/**").permitAll()
       .anyRequest().authenticated() //any request needs to be authenticated
       .and()
       .sessionManagement()
-      //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)      // jwt, don't create session
-      .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)     
+      .sessionCreationPolicy(SessionCreationPolicy.STATELESS);      // jwt, don't create session
+      //.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)     
 
 
-      .and()
-      .formLogin().loginPage("/login").permitAll();
+      //.and()
+      //.formLogin().loginPage("/login").permitAll();
       /*
       .and()
       .formLogin()
@@ -148,9 +149,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           
       */
       
-      //http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+      http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
       //http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-      http.addFilterAfter(customAuthenticationFilter, ExceptionTranslationFilter.class);
+      //http.addFilterAfter(customAuthenticationFilter, ExceptionTranslationFilter.class);
       //http.addFilterAt(filter, atFilter)
 
    /*

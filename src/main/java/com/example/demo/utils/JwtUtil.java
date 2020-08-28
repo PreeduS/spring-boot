@@ -9,8 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,9 +37,11 @@ import java.security.KeyFactory;
 
 @Service
 public class JwtUtil {
-    @Value("classpath:private/key.pem")
+    //@Value("classpath:private/key.pem")
+    @Value("classpath:private/key.pkcs8.pem")
     private Resource SECRET_KEY;
-    @Value("classpath:private/public.pem")
+    //@Value("classpath:private/public.pem")
+    @Value("classpath:private/key-pkcs8.pub")
     private Resource PUB_KEY;
 
     @Autowired
@@ -72,11 +76,51 @@ public class JwtUtil {
 
     // Claims are a JWT's 'body'
     private Claims extractAllClaims(String token) {
-        String key = base64Encode(fileUtil.readResourceAsString(PUB_KEY));
-        return Jwts.parser().setSigningKey(key).parseClaimsJws(token) // throws ExpiredJwtException,
-                                                                      // UnsupportedJwtException, MalformedJwtException,
-                                                                      // SignatureException, IllegalArgumentException;
-                                                                      // // base JwtException
+       // String key = base64Encode(fileUtil.readResourceAsString(PUB_KEY));
+        String key = fileUtil.readResourceAsString(PUB_KEY);
+ 
+        //key = key.replaceAll("\\n", "");//.replace(RsaPrivateKeyStart, "").replace(RsaPrivateKeyEnd, "");
+
+        key = key.replace("-----BEGIN PUBLIC KEY-----", "");
+        key = key.replace("-----END PUBLIC KEY-----", "");
+        key = key.replaceAll("\\s+", "");
+
+   //X509EncodedKeySpec expects the DER encoding of an ASN.1
+        final byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+        //byte[] pkcs8bytes  = Base64.getDecoder().decode(keyBytes);
+    byte[] pkcs8bytes  = Base64.getMimeDecoder().decode(keyBytes);
+    //PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(key.getBytes());
+   //PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(pkcs8bytes);
+    
+    X509EncodedKeySpec ks = new X509EncodedKeySpec(pkcs8bytes );
+
+    //X509EncodedKeySpec ks = new X509EncodedKeySpec(key.getBytes());
+   // Only RSAPublicKeySpec and X509EncodedKeySpec supported for RSA public keys
+
+
+   //X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(keyBytes);
+
+
+    PublicKey publicKey = null;
+    try {
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+       publicKey = kf.generatePublic(ks);
+       // publicKey = kf.generatePublic(publicKeySpec);
+    } catch (NoSuchAlgorithmException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }catch (InvalidKeySpecException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+        // return Jwts.parser()
+        return Jwts.parserBuilder()
+        .setSigningKey(publicKey)
+        .build()
+        .parseClaimsJws(token)  // throws ExpiredJwtException,
+                                // UnsupportedJwtException, MalformedJwtException,
+                                // SignatureException, IllegalArgumentException;
+                                // // base JwtException
                 .getBody();
     }
 
@@ -93,12 +137,26 @@ public class JwtUtil {
         // String key = base64Encode(fileUtil.readResourceAsString(SECRET_KEY));
         String key = fileUtil.readResourceAsString(SECRET_KEY);
         // strip the headers
-        //key = key.replace("-----BEGIN RSA PRIVATE KEY-----", "");
-        //key = key.replace("-----END RSA PRIVATE KEY-----", "");
-        //key = key.replaceAll("\\s+", "");
+        key = key.replace("-----BEGIN RSA PRIVATE KEY-----", "");
+        key = key.replace("-----END RSA PRIVATE KEY-----", "");
+
+        //key = key.replaceAll("\\n", "");//.replace(RsaPrivateKeyStart, "").replace(RsaPrivateKeyEnd, "");
+
+         key = key.replace("-----BEGIN PRIVATE KEY-----", "");
+        key = key.replace("-----END PRIVATE KEY-----", "");
+        key = key.replaceAll("\\s+", "");
+        System.out.println("KEY:"+key);
         // PrivateKey privateKey = new PrivateKeyImpl(key.getBytes());
 
-        PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(key.getBytes());
+            // byte[] pkcs8EncodedKey = Base64.getDecoder().decode(privateKeyPem);
+            final byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+            //byte[] pkcs8bytes  = Base64.getDecoder().decode(keyBytes);
+            byte[] pkcs8bytes  = Base64.getMimeDecoder().decode(keyBytes);
+        //PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(key.getBytes());
+        PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(pkcs8bytes);
+        
+        //X509EncodedKeySpec ks = new X509EncodedKeySpec(pkcs8bytes );
+        //X509EncodedKeySpec ks = new X509EncodedKeySpec(key.getBytes());
       
         PrivateKey privateKey = null;
         try {
@@ -130,13 +188,15 @@ public class JwtUtil {
         try{
             extractAllClaims(token);
             return true;
-        } catch (JwtException e) {
+        //} catch (JwtException e) {
+        } catch (Exception e) {
             return false;
         }
     }
     public Boolean validateToken(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        boolean result = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return result;
     }
 
 

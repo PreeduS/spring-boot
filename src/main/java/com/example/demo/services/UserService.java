@@ -52,7 +52,7 @@ public class UserService {
         return getAuthentication().isAuthenticated();
     }
     public void setAuthentication(Authentication authentication){
-        SecurityContextHolder.getContext().setAuthentication(authentication);;
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     public void logout(){

@@ -30,10 +30,13 @@ public class AppUserDetails implements UserDetails {
         */
         //List<Authorities> a = user.getRoles();
 
-        this.authorities = user.getRoles().stream()
+    
+        List<GrantedAuthority> authorities = user.getRoles().stream()
         .map(x ->x.getAuthority())
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
+
+        this.authorities = authorities;
 
         /*String[] roles = {"USER"};
         this.authorities = Arrays.stream( roles )

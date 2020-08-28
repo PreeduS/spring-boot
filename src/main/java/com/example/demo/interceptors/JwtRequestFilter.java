@@ -15,6 +15,7 @@ import com.example.demo.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -40,24 +41,33 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
         String prefix = "Bearer ";
+        System.out.println("authorizationHeader : "+authorizationHeader);
         if(authorizationHeader != null && authorizationHeader.startsWith(prefix)){
             jwt = authorizationHeader.substring(prefix.length());
             username = jwtUtil.extractUsername(jwt);
             
         }
 
-        if(username != null &&  userService.getAuthentication() == null){
+        //if(username != null &&  userService.getAuthentication() == null){
+        if(username != null ){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if(jwtUtil.validateToken(jwt, userDetails)){
                  //Collection<?> z = userDetails.getAuthorities();
+                 System.out.println("--------------------------is valid jwt" + username);
 
                 // default
+                Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = 
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                 
+                    // ??
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                userService.setAuthentication(usernamePasswordAuthenticationToken);
+                //userService.setAuthentication(usernamePasswordAuthenticationToken);
+System.out.println("usernamePasswordAuthenticationToken isAuthenticated "+ usernamePasswordAuthenticationToken.isAuthenticated());
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
+            }else{
+                System.out.println("--------------------------not valid jwt" + username);
             }
 
 
@@ -71,7 +81,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return !request.getServletPath().equals("/login") || !request.getServletPath().equals("/graphql");
+        boolean result =  request.getServletPath().equals("/login") || request.getServletPath().equals("/graphql");
+        return result;
 		//return super.shouldNotFilter(request);
 	}
     
