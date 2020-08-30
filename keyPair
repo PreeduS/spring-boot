@@ -3,14 +3,14 @@ openssl genrsa -out key.pem 4096
 
 # Convert private Key to PKCS#8 format (so Java can read it)
 
-#openssl pkcs8 -topk8 -inform PEM -outform DER -in key.pem -out key.der -nocrypt
+// openssl pkcs8 -topk8 -inform PEM -outform DER -in key.pem -out key.der -nocrypt
 // pkcs12               // PKCS8EncodedKeySpec
 openssl pkcs8 -topk8 -inform PEM -outform PEM -in key.pem -out key.pkcs8.pem -nocrypt
 
 # extract public key
-#openssl rsa -in key.pem -outform PEM -pubout -out public.pem
+// openssl rsa -in key.pem -outform PEM -pubout -out public.pem
 
- ssh-keygen -f key.pem -e -m pkcs8 > key-pkcs8.pub
+ssh-keygen -f key.pem -e -m pkcs8 > key-pkcs8.pub
 
 -----
 Generate a 2048-bit RSA private key

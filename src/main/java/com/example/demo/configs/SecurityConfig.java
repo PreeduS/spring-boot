@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import com.example.demo.security.filters.CustomAuthenticationFilter;
 import com.example.demo.security.providers.CustomAuthenticationProvider;
 import com.example.demo.services.AppUserDetailService;
+import com.example.demo.utils.HttpResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.interceptors.JwtRequestFilter;
 
@@ -46,6 +47,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 // @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+  protected static final AuthenticationException BadCredentialsException = null;
+
   @Autowired
   DataSource dataSource;
 
@@ -53,8 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   UserDetailsService userDetailsService;
   @Autowired
   AppUserDetailService appUserDetailService;
-  //@Autowired
-  //CustomAuthenticationProvider customAuthenticationProvider;
+  @Autowired
+  CustomAuthenticationProvider customAuthenticationProvider;
 
   @Autowired
   JwtRequestFilter jwtRequestFilter;
@@ -95,7 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
 
       //auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
-      auth.userDetailsService(appUserDetailService);
+      //auth.userDetailsService(appUserDetailService);
 
     //auth.authenticationProvider(customAuthenticationProvider);
     // auth.authenticationProvider(authProvider2);
@@ -105,6 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
     protected void configure(HttpSecurity http) throws Exception{
       http
+      //.anonymous().disable()
       .csrf().disable()
       .authorizeRequests()
       .antMatchers("/protected/admin").hasRole("ADMIN")
@@ -159,31 +163,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         response.setStatus(403);
         response.getWriter().write("Forbidden: accessDeniedHandler " + accessDeniedException.getMessage());
       });*/
+      http.exceptionHandling().accessDeniedHandler(new RestAccessDeniedHandler());
+    
+      
+      if(true){
 
+     
       http.exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint(){
 
           @Override
           public void commence(HttpServletRequest request, HttpServletResponse response,
               AuthenticationException authException) throws IOException, ServletException {
-            
-
+       
                 //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"AuthenticationEntryPoint: Authentication failed");
                 
                 //response.getOutputStream().println("{ \"error\": \"" + "test " + authException.getMessage() + "\" }");
-
-                Map<String, Object> data = new HashMap<>();
+       
+                /*Map<String, Object> data = new HashMap<>();
                 data.put("timestamp", new Date());
                 data.put("status",HttpStatus.FORBIDDEN.value());
                 data.put("message", authException.getMessage());
                 data.put("path", request.getRequestURL().toString());
 
                 response.setContentType("application/json");
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                //response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 OutputStream out = response.getOutputStream();
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.writeValue(out, data);
-                out.flush();
+                out.flush();*/
+
+                HttpResponseUtil.writeExceptionToResponse(response, authException.getMessage(), request.getRequestURL().toString());
                
           }
        /*   
@@ -203,6 +214,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      
               */
       });
+    }
     }
 
     @Override

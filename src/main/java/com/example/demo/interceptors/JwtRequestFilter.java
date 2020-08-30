@@ -1,7 +1,10 @@
 package com.example.demo.interceptors;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,11 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.services.AppUserDetailService;
 import com.example.demo.services.UserService;
+import com.example.demo.utils.HttpResponseUtil;
 import com.example.demo.utils.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,39 +49,34 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
         String prefix = "Bearer ";
-        System.out.println("authorizationHeader : "+authorizationHeader);
+
         if(authorizationHeader != null && authorizationHeader.startsWith(prefix)){
             jwt = authorizationHeader.substring(prefix.length());
-            username = jwtUtil.extractUsername(jwt);
+
+                username = jwtUtil.extractUsername(jwt);
+
             
         }
-
-        //if(username != null &&  userService.getAuthentication() == null){
+ 
         if(username != null ){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if(jwtUtil.validateToken(jwt, userDetails)){
-                 //Collection<?> z = userDetails.getAuthorities();
-                 System.out.println("--------------------------is valid jwt" + username);
-
                 // default
                 Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = 
                     new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                 
-                    // ??
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                //userService.setAuthentication(usernamePasswordAuthenticationToken);
-System.out.println("usernamePasswordAuthenticationToken isAuthenticated "+ usernamePasswordAuthenticationToken.isAuthenticated());
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
             }else{
-                System.out.println("--------------------------not valid jwt" + username);
+                HttpResponseUtil.writeExceptionToResponse(response, "Invalid token", request.getRequestURL().toString());
             }
 
 
-            //catch io.jsonwebtoken.SignatureException:
 
-
+        }else{
+            HttpResponseUtil.writeExceptionToResponse(response, "Invalid token", request.getRequestURL().toString());
         }
         filterChain.doFilter(request, response);
         
@@ -84,6 +87,8 @@ System.out.println("usernamePasswordAuthenticationToken isAuthenticated "+ usern
         boolean result =  request.getServletPath().equals("/login") || request.getServletPath().equals("/graphql");
         return result;
 		//return super.shouldNotFilter(request);
-	}
+    }
+    
+
     
 }
