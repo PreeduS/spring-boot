@@ -31,33 +31,30 @@ import java.security.KeyFactory;
 
 @Service
 public class JwtUtil {
-    //@Value("classpath:private/key.pem")
+    // @Value("classpath:private/key.pem")
     @Value("classpath:private/key.pkcs8.pem")
     private Resource SECRET_KEY;
-    //@Value("classpath:private/public.pem")
+    // @Value("classpath:private/public.pem")
     @Value("classpath:private/key-pkcs8.pub")
     private Resource PUB_KEY;
 
     @Autowired
     FileUtil fileUtil;
 
-
-
-
-    private X509EncodedKeySpec getX509EncodedKeySpec(String key){
+    private X509EncodedKeySpec getX509EncodedKeySpec(String key) {
         key = key.replace("-----BEGIN PUBLIC KEY-----", "");
         key = key.replace("-----END PUBLIC KEY-----", "");
         key = key.replaceAll("\\s+", "");
         final byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
 
-        byte[] pkcs8bytes  = Base64.getMimeDecoder().decode(keyBytes);
+        byte[] pkcs8bytes = Base64.getMimeDecoder().decode(keyBytes);
 
         X509EncodedKeySpec ks = new X509EncodedKeySpec(pkcs8bytes);
 
         return ks;
     }
 
-    public PKCS8EncodedKeySpec getPKCS8EncodedKeySpec(String key){
+    public PKCS8EncodedKeySpec getPKCS8EncodedKeySpec(String key) {
         key = key.replace("-----BEGIN RSA PRIVATE KEY-----", "");
         key = key.replace("-----END RSA PRIVATE KEY-----", "");
         key = key.replace("-----BEGIN PRIVATE KEY-----", "");
@@ -65,28 +62,32 @@ public class JwtUtil {
         key = key.replaceAll("\\s+", "");
 
         final byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
-        byte[] pkcs8bytes  = Base64.getMimeDecoder().decode(keyBytes); 
+        byte[] pkcs8bytes = Base64.getMimeDecoder().decode(keyBytes);
 
         PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(pkcs8bytes);
-        
+
         return ks;
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        try {
+            return extractClaim(token, Claims::getSubject);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    public Date extractExpiration(String token) {
+    public Date extractExpiration(String token) throws Exception {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws Exception {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     // Claims are a JWT's 'body'
-    private Claims extractAllClaims(String token) throws JwtException, IllegalArgumentException{
+    private Claims extractAllClaims(String token) throws Exception {
         String key = fileUtil.readResourceAsString(PUB_KEY);
         X509EncodedKeySpec ks = getX509EncodedKeySpec(key);
 
@@ -94,30 +95,34 @@ public class JwtUtil {
         try {
             KeyFactory kf = KeyFactory.getInstance("RSA");
             publicKey = kf.generatePublic(ks);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException  e) { 
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new Exception();
         }
         // return Jwts.parser()
-        return Jwts.parserBuilder()
-        .setSigningKey(publicKey)
-        .build()
-        .parseClaimsJws(token)  // throws ExpiredJwtException,
-                                // UnsupportedJwtException, MalformedJwtException,
-                                // SignatureException, IllegalArgumentException;
-                                // // base JwtException
+        return Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token) // throws
+                                                                                           // ExpiredJwtException,
+                                                                                           // UnsupportedJwtException,
+                                                                                           // MalformedJwtException,
+                                                                                           // SignatureException,
+                                                                                           // IllegalArgumentException;
+                                                                                           // // base JwtException
         .getBody();
     }
 
     public Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        try {
+            return extractExpiration(token).before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails) throws Exception {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String subject) throws Exception {
         String key = fileUtil.readResourceAsString(SECRET_KEY);
         PKCS8EncodedKeySpec ks = getPKCS8EncodedKeySpec(key);
         PrivateKey privateKey = null;
@@ -126,7 +131,7 @@ public class JwtUtil {
             KeyFactory kf = KeyFactory.getInstance("RSA");
             privateKey = kf.generatePrivate(ks);
         }catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-             e.printStackTrace();
+            throw new Exception();
         }
  
         return Jwts
@@ -151,9 +156,13 @@ public class JwtUtil {
         }
     }
     public Boolean validateToken(String token, UserDetails userDetails){
-        final String username = extractUsername(token);
-        boolean result = username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-        return result;
+        try{
+            final String username = extractUsername(token);
+            boolean result = username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+            return result;
+        }catch (Exception e) {
+            return false;
+        }
     }
 
 

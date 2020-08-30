@@ -53,12 +53,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(authorizationHeader != null && authorizationHeader.startsWith(prefix)){
             jwt = authorizationHeader.substring(prefix.length());
 
-                username = jwtUtil.extractUsername(jwt);
+            username = jwtUtil.extractUsername(jwt);
 
             
         }
  
-        if(username != null ){
+        //if(username != null ){
+        if(username != null && jwt != null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if(jwtUtil.validateToken(jwt, userDetails)){
                 // default
@@ -84,7 +85,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        boolean result =  request.getServletPath().equals("/login") || request.getServletPath().equals("/graphql");
+        boolean result = request.getServletPath().equals("/auth/jwt") || request.getServletPath().equals("/login") || request.getServletPath().equals("/graphql");
         return result;
 		//return super.shouldNotFilter(request);
     }

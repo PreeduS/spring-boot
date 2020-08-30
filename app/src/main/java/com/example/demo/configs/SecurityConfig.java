@@ -88,9 +88,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
 
     
-        auth
-        .jdbcAuthentication()
-        .dataSource(dataSource);
+        ///auth
+        ///.jdbcAuthentication()
+        ///.dataSource(dataSource);
         //.passwordEncoder(getPasswordEncoder())
         //.withUser("user").password( getPasswordEncoder().encode("pass") ).roles("USER")
         //.and()
@@ -98,7 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
 
       //auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
-      //auth.userDetailsService(appUserDetailService);
+      auth.userDetailsService(appUserDetailService);
 
     //auth.authenticationProvider(customAuthenticationProvider);
     // auth.authenticationProvider(authProvider2);

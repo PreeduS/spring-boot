@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.dto.AuthenticationJwtRequestDto;
 import com.example.demo.dto.AuthenticationJwtResponseDto;
+import com.example.demo.services.AppUserDetailService;
 import com.example.demo.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    UserDetailsService userDetailsService;
+    AppUserDetailService userDetailsService;
     @Autowired
     JwtUtil jwtUtil;
 
@@ -42,22 +43,28 @@ public class AuthController {
         return "protected/admin2";
     } 
     @PostMapping("/auth/jwt")
-    public ResponseEntity<AuthenticationJwtResponseDto> authJwt(@RequestBody AuthenticationJwtRequestDto authenticationJwtRequestDto) throws Exception{
+    public ResponseEntity<AuthenticationJwtResponseDto> authJwt(@RequestBody AuthenticationJwtRequestDto authenticationJwtRequestDto){
         //try{
 
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authenticationJwtRequestDto.getUsername(), authenticationJwtRequestDto.getPassword())
-            );
+            //authenticationManager.authenticate(
+            //    new UsernamePasswordAuthenticationToken(authenticationJwtRequestDto.getUsername(), authenticationJwtRequestDto.getPassword())
+            //);
        // }catch(BadCredentialsException e){
             //throw new BadCredentialsException("Incorrect username or password");
        // }
 
+        try{
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationJwtRequestDto.getUsername());
-        String jwtToken = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok( 
-            new AuthenticationJwtResponseDto(jwtToken) 
-        );
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationJwtRequestDto.getUsername());
+            String jwtToken = jwtUtil.generateToken(userDetails);
+            return ResponseEntity.ok( 
+                new AuthenticationJwtResponseDto(jwtToken) 
+            );
+        }catch(Exception e){
+            throw new BadCredentialsException("Incorrect username or password");
+        }
+
+
 
     } 
 }
