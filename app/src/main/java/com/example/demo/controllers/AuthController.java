@@ -1,11 +1,16 @@
 package com.example.demo.controllers;
 
+import javax.annotation.PostConstruct;
+
 import com.example.demo.dto.AuthenticationJwtRequestDto;
 import com.example.demo.dto.AuthenticationJwtResponseDto;
 import com.example.demo.services.AppUserDetailService;
+import com.example.demo.services.RestService;
 import com.example.demo.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class AuthController {
@@ -27,6 +33,18 @@ public class AuthController {
     AppUserDetailService userDetailsService;
     @Autowired
     JwtUtil jwtUtil;
+
+    @Autowired
+    RestTemplateBuilder restTemplateBuilder;
+    RestService restService;
+        
+    @PostConstruct
+    private void init(){
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        restService = new RestService(restTemplate);
+
+    }
+
 
     @GetMapping("/protected/user")
     public String protectedUser() {
@@ -66,5 +84,11 @@ public class AuthController {
 
 
 
-    } 
+    }
+    @PostMapping("/auth/jwt2")
+    public ResponseEntity<AuthenticationJwtResponseDto> authJwt2(@RequestBody AuthenticationJwtRequestDto authenticationJwtRequestDto){
+        //todo add exception
+        ResponseEntity<AuthenticationJwtResponseDto> response = restService.call(HttpMethod.POST, "http://localhost:10090/auth/jwt",  authenticationJwtRequestDto, AuthenticationJwtResponseDto.class);
+        return response;
+    }
 }

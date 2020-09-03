@@ -114,6 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers("/protected/admin").hasRole("ADMIN")
       .antMatchers("/protected/user").hasAnyRole("USER","ADMIN")                // hasAnyAuthority(authorities) // manually handle role prefix
       .antMatchers("/auth/jwt").permitAll()        
+      .antMatchers("/auth/jwt2").permitAll()        
         //.antMatchers("/","static/css","static/js").permitAll()                // .antMatchers("/**")     // .antMatchers(HttpMethod.GET, "path")  
       .antMatchers("/login").anonymous()
       .antMatchers("/user-test").anonymous()

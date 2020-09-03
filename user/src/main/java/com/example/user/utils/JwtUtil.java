@@ -1,6 +1,4 @@
-package com.example.demo.utils;
-
-
+package com.example.user.utils;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
