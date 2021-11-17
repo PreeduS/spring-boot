@@ -10,10 +10,10 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented                                                             // visible in javadoc
-@Constraint(validatedBy = BetweenValidator.class)
+@Constraint(validatedBy = _BetweenValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Between {
+public @interface _Between {
     String message() default "Between validation message {min} - {max}";
     int min();
     int max();

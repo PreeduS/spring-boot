@@ -1,0 +1,47 @@
+
+
+https://stackoverflow.com/questions/37499307/whats-the-principal-in-spring-security
+
+A Principal represents a user's identity.
+It can be a String object having username on a simple level or a complex UserDetails object.
+
+
+---
+https://docs.spring.io/spring-security/site/docs/4.2.20.RELEASE/apidocs/org/springframework/security/core/Authentication.html
+
+Object Credentials 
+
+The credentials that prove the principal is correct. This is usually a password, but could be anything relevant to the AuthenticationManager. Callers are expected to populate the credentials.
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+https://www.youtube.com/watch?v=TNt3GHuayXs&list=PLqq-6Pq4lTTYTEooakHchTGglSvkZAjnE&index=8
+Spring Boot + Spring Security with JPA authentication and MySQL from scratch - Java Brains
+# 20
+
+Classes: 
+- UserDetails
+- UserDetailsService 
+public UserDetails loadUserByUsername(String username) 
+
+
+Configure:
+@EnableWebSecurity
+
+protected void configure(AuthenticationManagerBuilder auth){
+  auth.userDetailsService(appUserDetailService);
+}
+
+@Bean
+public PasswordEncoder getPasswordEncoder(){}

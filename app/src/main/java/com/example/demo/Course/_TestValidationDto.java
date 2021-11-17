@@ -3,9 +3,9 @@ package com.example.demo.Course;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.example.demo.validators.Between;
+import com.example.demo.validators._Between;
 
-public class TestValidationDto {
+public class _TestValidationDto {
 
     @NotNull
     @Size(min = 3, max = 5, message = "Size validation message")
@@ -13,10 +13,10 @@ public class TestValidationDto {
 
     private String status;
 
-    @Between(min = 10, max = 100)
+    @_Between(min = 10, max = 100)
     private Integer age;
 
-    public TestValidationDto(String name, String status){
+    public _TestValidationDto(String name, String status){
         this.name = name;
         this.status = status;
     }

@@ -7,7 +7,6 @@ import com.example.user.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +39,7 @@ public class AuthController {
                 new AuthenticationJwtResponseDto(jwtToken) 
             );
         }catch(Exception e){
-            throw new BadCredentialsException("Incorrect username or password");
+            throw new RuntimeException(e);
         }
 
 

@@ -7,12 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.example.demo.Exception.ValidationException;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,42 +87,7 @@ public class CourseController {
         criteriaService.temp8();
     }
 
-    @PostMapping("/test/validation")
-    public ResponseEntity<?> testValidation(@RequestBody @Valid TestValidationDto body) {
-       
-        return ResponseEntity.ok(body);
-         
-    }
-    @PostMapping("/test/validation2")
-    public ResponseEntity<?> testValidation2(@RequestBody @Valid TestValidationDto body, Errors errors) {
-       
-        if(errors.hasErrors()){
-            // throw new Error("Invalid Name");
-            List<String> error = errors.getFieldErrors().stream().map(x -> x.getField() +", " + x.getCode() + ", " + x.getDefaultMessage() ).collect(Collectors.toList());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        }
-        return ResponseEntity.ok(body);
-        //return ResponseEntity.ok().body(body);
+    //
 
 
-        // @Valid - validate based on the annotations in the TestValidationDto
-        // if validation fails and no Error param - Spring Boot throws a MethodArgumentNotValidException exception
-
-
-        // ch: BindingResult
-         
-    }
-    @PostMapping("/test/validation3")
-    public ResponseEntity<?> testValidation3(@RequestBody @Valid TestValidationDto body, Errors errors) {
-       
-        if(errors.hasErrors()){ 
-            List<String> error = errors.getFieldErrors().stream().map(x -> x.getField() +", " + x.getCode() + ", " + x.getDefaultMessage() ).collect(Collectors.toList());
-
-            throw new ValidationException(error.get(0));
-
-        }
-        return ResponseEntity.ok(body);
-    
-         
-    }
 }

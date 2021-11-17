@@ -1,9 +1,9 @@
 package com.example.demo.ExceptionHandlers;
 
-public class ValidationExceptionDto {
+public class _ValidationExceptionDto {
     public String message;
 
-    public ValidationExceptionDto(String message){
+    public _ValidationExceptionDto(String message){
         this.message = message;
     }
 }
